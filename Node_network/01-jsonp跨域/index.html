@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>jsonp跨域解决方案</title>
+</head>
+<body>
+    <h1>jsonp跨域解决方案</h1>
+    <script src="/axios/dist/axios.js"></script>
+    <script>
+        // axios新版本已经不支持jsonp方法
+        axios.jsonp = url => {
+            return new Promise((resolve, reject)=> {
+
+                window.jsonCallBack = function (result) {
+                    resolve(result);
+                }
+                // 动态创建script脚本，通过src属性拼接url地址
+                let JSONP = document.createElement('script');
+                JSONP.type = 'text/javascript';
+                JSONP.src = `${url}?cb=jsonCallBack`;
+                document.querySelector('head').appendChild(JSONP);
+                setTimeout(() => {
+                    document.querySelector('head').removeChild(JSONP);
+                }, 1000)
+            })
+        }
+        // axios.get('http://localhost:3000/user')
+        axios.jsonp('http://127.0.0.1:3000/user')
+        .then(res => {
+            console.log(res);
+        })
+        .catch(err => {
+            console.log(err);
+        })
+    </script>
+</body>
+</html>

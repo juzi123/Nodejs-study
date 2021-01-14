@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>cors跨域</title>
+</head>
+<body>
+    <h1>cors跨域</h1>
+    <script src="/axios/dist/axios.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/qs/6.9.4/qs.js"></script>
+    <script>
+        axios.defaults.baseURL = 'http://127.0.0.1:3000'
+                
+        axios.interceptors.request.use(function (config) {
+            // 将数据转换为username=uzi%password=123格式
+           config.data = Qs.stringify(config.data);
+           return config;
+        }, function (error) {
+            return Promise.reject(error)
+        })
+        
+        axios.post('/login', {
+            username: 'uzi',
+            password: 123
+        }, {
+            // 表示跨域请求时需要使用凭证， 允许携带cookie
+            withCredentials: true
+        })
+        .then(res => {
+            console.log(res);
+        })
+        .catch(err => {
+            console.log(err);
+        })
+    </script>
+</body>
+</html>
